@@ -45,6 +45,7 @@ namespace MidTernProj_HangMan
         {
             Word userWord = PickWord(GetDifficulty());
             Console.WriteLine(userWord.MysteriousName);
+            DisplayDynamite(5);
         }
 
         public static Word PickWord(string difficulty)
@@ -63,8 +64,28 @@ namespace MidTernProj_HangMan
                 line = reader.ReadLine();
             }
             reader.Close();
+            Word word = words[random.Next(words.Count + 1)];
+            return word;
+        }
 
-            return words[random.Next(words.Count + 1)];
+        public static void DisplayDynamite(int length)
+        {
+            string dynamite = "______________\n" +
+                              "|  Dynamite  |";
+            for (int i = 0; i < length; i++)
+            {
+                if (i != length - 1)
+                {
+                    dynamite += "-";
+                }
+                else
+                {
+                    dynamite += "*";
+                }
+            }
+            dynamite += "\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾";
+            Console.WriteLine(dynamite);
+
         }
     }
 }
