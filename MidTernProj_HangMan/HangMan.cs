@@ -9,11 +9,14 @@ namespace MidTernProj_HangMan
     {
         public int Misses { get; set; }
         public string Guessed { get; set; }
+        public string MysteryWord { get; set; }
+
 
         public HangMan()
-        {
+        {        }
 
-        }
+       // public  HangMan(string message)
+
 
 
         public static string GetUserInput()
