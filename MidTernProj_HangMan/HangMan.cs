@@ -29,29 +29,42 @@ namespace MidTernProj_HangMan
             return GetUserInput();
         }
 
+        public static string GetDifficulty()
+        {
+            Console.WriteLine("Pick a difficulty. (Easy, Medium, Hard)");
+            string message = Console.ReadLine().ToLower();
+            if (message == "easy" || message == "medium" || message == "hard")
+            {
+                return message;
+            }
+            return GetDifficulty();
+        }
+
 
         public static void StartHangMan()
         {
-            PickWord();
-            GetUserInput();
+            Word userWord = PickWord(GetDifficulty());
+            Console.WriteLine(userWord.MysteriousName);
         }
 
-        public static void PickWord()
+        public static Word PickWord(string difficulty)
         {
             List<Word> words = new List<Word>();
             StreamReader reader = new StreamReader("../../../TextFile1.txt");
             string line = reader.ReadLine();
+            Random random = new Random();
             while (line != null)
             {
                 string[] splitWords = line.Split("|");
-                words.Add(new Word(splitWords[0], splitWords[1]));
+                if (splitWords[1] == difficulty)
+                {
+                    words.Add(new Word(splitWords[0], splitWords[1]));
+                }
                 line = reader.ReadLine();
             }
             reader.Close();
-            foreach (var word in words)
-            {
-                Console.WriteLine(word.MysteriousName);
-            }
+
+            return words[random.Next(words.Count + 1)];
         }
     }
 }
