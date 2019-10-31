@@ -15,7 +15,7 @@ namespace MidTernProj_HangMan
         public HangMan()
         {        }
 
-       // public  HangMan(string message)
+     
 
 
 
