@@ -6,8 +6,7 @@ namespace MidTernProj_HangMan
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            HangMan.GetUserInput();
+            HangMan.StartHangMan();
         }
     }
 }
