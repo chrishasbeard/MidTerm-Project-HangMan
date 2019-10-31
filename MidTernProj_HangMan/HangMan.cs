@@ -70,6 +70,7 @@ namespace MidTernProj_HangMan
 
         public static void DisplayDynamite(int length)
         {
+
             string dynamite = "______________\n" +
                               "|  Dynamite  |";
             for (int i = 0; i < length; i++)
@@ -84,6 +85,17 @@ namespace MidTernProj_HangMan
                 }
             }
             dynamite += "\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾";
+            while (dynamite.Contains("*"))
+            {
+
+            }
+            if (length == 0)
+            {
+                Console.WriteLine("\\  |  /" +
+                                  " \\ | /" +
+                                  "  \\|/");
+            }
+
             Console.WriteLine(dynamite);
 
         }
