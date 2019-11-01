@@ -8,9 +8,9 @@ namespace MidTernProj_HangMan
 {
     class HangMan
     {
-        public int Misses { get; set; }
-        public string Guessed { get; set; }
-        public Word word { get; set; }
+        //public int Misses { get; set; }
+        // public string Guessed { get; set; }
+        // public Word word { get; set; }
 
         public HangMan()
         {
@@ -18,19 +18,20 @@ namespace MidTernProj_HangMan
         }
 
 
-        public static string GetUserInput()
+        public static char GetUserInput()
         {
             Console.WriteLine("Pick a letter!");
             string message = Console.ReadLine().ToLower();
-            if (Regex.IsMatch(message, @"[a-z]"))
+            if (Regex.IsMatch(message, @"^[a-z]{1}$"))
             {
-                return message;
+                return message[0];
             }
             return GetUserInput();
         }
 
         public static string GetDifficulty()
         {
+            Console.WriteLine("Welcome to Dynamite-man! the game that will blow your socks off, literally.\n\nLet's play!");
             Console.WriteLine("Pick a difficulty. (Easy, Medium, Hard)");
             string message = Console.ReadLine().ToLower();
             if (message == "easy" || message == "medium" || message == "hard")
@@ -44,8 +45,7 @@ namespace MidTernProj_HangMan
         public static void StartHangMan()
         {
             Word userWord = PickWord(GetDifficulty());
-            Console.WriteLine(userWord.MysteriousName);
-            DisplayDynamite(5);
+            GuessingGame(userWord);
         }
 
         public static Word PickWord(string difficulty)
@@ -99,9 +99,75 @@ namespace MidTernProj_HangMan
                                   "*/*|*\\*\n" +
                                   "/**|**\\\n" +
                                   "");
-            } else
+            }
+            else
             {
                 Console.WriteLine(dynamite);
+            }
+        }
+        public static void GuessingGame(Word word)
+        {
+            int missCount = 0;
+            int misses = 0;
+            bool checkLoss = false;
+            string mysteryWord = word.MysteriousName;
+            char[] guess = new char[mysteryWord.Length];
+            bool checkWin = false;
+            if (word.Difficulty == "easy")
+            {
+                missCount = mysteryWord.Length + 3;
+            }
+            else if (word.Difficulty == "medium")
+            {
+                missCount = mysteryWord.Length;
+            }
+            else if (word.Difficulty == "hard")
+            {
+                missCount = mysteryWord.Length - 1;
+            }
+
+
+            //HangMan displayToPlayer = new HangMan();
+            for (int i = 0; i < mysteryWord.Length; i++)
+            {
+                Console.Write("*");
+                //Console.WriteLine("");
+                guess[i] = '*';
+            }
+
+            while (misses != missCount)
+            {
+
+                Console.WriteLine();
+                checkWin = true;
+                char playerGuess = GetUserInput();
+                for (int j = 0; j < mysteryWord.Length; j++)
+                {
+                    if (playerGuess == mysteryWord[j])
+                    {
+                        guess[j] = playerGuess;
+                        checkLoss = true;
+                    }
+                }
+                for (int i = 0; i < guess.Length; i++)
+                {
+                    if (guess[i] == '*')
+                    {
+                        checkWin = false;
+                    }
+                }
+                if (checkWin)
+                {
+                    Console.WriteLine("You win!!!");
+                    // add counter to put tally in scoreboard
+                    break;
+                }
+                if (!checkLoss)
+                {
+                    misses++;
+
+                }
+                Console.WriteLine(guess);
             }
         }
     }
