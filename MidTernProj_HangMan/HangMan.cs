@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Threading;
 
 namespace MidTernProj_HangMan
 {
@@ -41,6 +42,53 @@ namespace MidTernProj_HangMan
             return GetDifficulty();
         }
 
+        public static Player VerifyLogIn()
+        {
+            Console.WriteLine("What is your user name?");
+            string nameEntered = Console.ReadLine().ToLower();
+            bool checkExisting = Player.CheckUserName(nameEntered);
+            if(!checkExisting)
+            {
+                Console.WriteLine("This user name doesn't exist");
+                return VerifyLogIn();
+            }
+            Console.WriteLine("What is your password?");
+            string passwordEntered = Console.ReadLine().ToLower();
+            Player player = Player.CheckPassword(nameEntered, passwordEntered);
+            if (player.UserName == "Fake player")
+            {
+                Console.WriteLine("Wrong Password!");
+                return VerifyLogIn();
+            }
+
+            return player;
+        }
+
+        public static Player AddNewUser()
+        {
+            Console.WriteLine("What will be your user name?");
+            string userName = Console.ReadLine();
+            Console.WriteLine("what will be your password?");
+            string password = Console.ReadLine();
+
+            Player newPlayer = new Player(userName, password, 0, 0, 0);
+            Player.AddPlayer(newPlayer);
+            return newPlayer;
+        }
+
+        public static Player LogInUser()
+        {
+            Console.WriteLine("Do you already have an account in the game?");
+            string answer = Console.ReadLine().ToLower();
+            if (answer == "yes" || answer == "y")
+            {
+                return VerifyLogIn();
+            }
+            else
+            {
+                return AddNewUser();
+            }
+        }
 
         public static void StartHangMan()
         {
@@ -64,14 +112,14 @@ namespace MidTernProj_HangMan
                 line = reader.ReadLine();
             }
             reader.Close();
-            Word word = words[random.Next(words.Count + 1)];
+            Word word = words[random.Next(words.Count)];
             return word;
         }
 
         public static void DisplayDynamite(int length)
         {
 
-            string dynamite = "______________\n" +
+            string dynamite = "\n______________\n" +
                               "|  Dynamite  |";
             for (int i = 0; i < length; i++)
             {
@@ -85,10 +133,10 @@ namespace MidTernProj_HangMan
                 }
             }
             dynamite += "\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾";
-            while (dynamite.Contains("*"))
-            {
+            //while (dynamite.Contains("*"))
+            //{
 
-            }
+            //}
             if (length == 0)
             {
                 Console.WriteLine("\\**|**/\n" +
@@ -107,6 +155,7 @@ namespace MidTernProj_HangMan
         }
         public static void GuessingGame(Word word)
         {
+            
             int missCount = 0;
             int misses = 0;
             bool checkLoss = false;
@@ -137,9 +186,10 @@ namespace MidTernProj_HangMan
 
             while (misses != missCount)
             {
-
+                DisplayDynamite(missCount - misses);
                 Console.WriteLine();
                 checkWin = true;
+                checkLoss = false;
                 char playerGuess = GetUserInput();
                 for (int j = 0; j < mysteryWord.Length; j++)
                 {
@@ -158,16 +208,38 @@ namespace MidTernProj_HangMan
                 }
                 if (checkWin)
                 {
-                    Console.WriteLine("You win!!!");
+                    Console.WriteLine("YOU WON!!!");
+
+
                     // add counter to put tally in scoreboard
                     break;
                 }
                 if (!checkLoss)
                 {
                     misses++;
-
+                    
                 }
                 Console.WriteLine(guess);
+            }
+            if (misses == missCount)
+            {
+                for(int i =0; i<50; i++)
+                {
+                    Console.WriteLine("          _ ._  _ , _ ._");
+                    Console.WriteLine("        (_ ' ( `  )_  .__)");
+                    Console.WriteLine("      ( (  (    )   `)  ) _)");
+                    Console.WriteLine("     (__ (_   (_ . _) _) ,__)");
+                    Console.WriteLine("         `~~`\\ ' . /`~~`");
+                    Console.WriteLine("              ;    ;");
+                    Console.WriteLine("              /   \\");
+                    Console.WriteLine("_____________/_ __\\_____________");
+                    Thread.Sleep(50);
+                    Console.Clear();
+                }
+            }
+            else
+            {
+                    
             }
         }
     }

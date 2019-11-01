@@ -22,7 +22,7 @@ tree|easy
 funny|easy
 super|easy
 cool|easy
-r5ediculous|hard
+rediculous|hard
 press|easy
 good|easy
 neat|medium
