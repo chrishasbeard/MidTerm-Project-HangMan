@@ -27,4 +27,4 @@ press|easy
 good|easy
 neat|medium
 adore|medium
-lovely|medium
+lovely|mediums
