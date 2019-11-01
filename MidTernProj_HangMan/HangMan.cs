@@ -21,7 +21,7 @@ namespace MidTernProj_HangMan
         public static string GetUserInput()
         {
             Console.WriteLine("Pick a letter!");
-            string message = Console.ReadLine();
+            string message = Console.ReadLine().ToLower();
             if (Regex.IsMatch(message, @"[a-z]"))
             {
                 return message;
