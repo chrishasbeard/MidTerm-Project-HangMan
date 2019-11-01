@@ -44,10 +44,11 @@ namespace MidTernProj_HangMan
 
         public static Player VerifyLogIn()
         {
+            Player.GrabPlayers();
             Console.WriteLine("What is your user name?");
             string nameEntered = Console.ReadLine().ToLower();
             bool checkExisting = Player.CheckUserName(nameEntered);
-            if(!checkExisting)
+            if (!checkExisting)
             {
                 Console.WriteLine("This user name doesn't exist");
                 return VerifyLogIn();
@@ -92,8 +93,42 @@ namespace MidTernProj_HangMan
 
         public static void StartHangMan()
         {
-            Word userWord = PickWord(GetDifficulty());
-            GuessingGame(userWord);
+            Player player = LogInUser();
+            do
+            {
+
+                Word userWord = PickWord(GetDifficulty());
+                if (GuessingGame(userWord))
+                {
+                    player.WinNum++;
+                }
+                else
+                {
+                    player.Losses++;
+                }
+                Player.CheckHighScore();
+                Player.CalcWinLoss(player);
+            } while (KeepPlaying());
+        }
+
+        
+
+        public static bool KeepPlaying()
+        {
+            Console.WriteLine($"\n Would you like to keep playing?: (y/n) ");
+            string message = Console.ReadLine();
+            if (message == "y" || message == "yes")
+            {
+                return true;
+            }
+            else if (message == "n" || message == "no")
+            {
+                return false;
+            }
+            else
+            {
+                return KeepPlaying();
+            }
         }
 
         public static Word PickWord(string difficulty)
@@ -153,9 +188,9 @@ namespace MidTernProj_HangMan
                 Console.WriteLine(dynamite);
             }
         }
-        public static void GuessingGame(Word word)
+        public static bool GuessingGame(Word word)
         {
-            
+
             int missCount = 0;
             int misses = 0;
             bool checkLoss = false;
@@ -181,7 +216,7 @@ namespace MidTernProj_HangMan
             {
                 Console.Write("*");
                 //Console.WriteLine("");
-                guess[i] = '*';
+                guess[i] = '_';
             }
 
             while (misses != missCount)
@@ -201,7 +236,7 @@ namespace MidTernProj_HangMan
                 }
                 for (int i = 0; i < guess.Length; i++)
                 {
-                    if (guess[i] == '*')
+                    if (guess[i] == '_')
                     {
                         checkWin = false;
                     }
@@ -209,21 +244,21 @@ namespace MidTernProj_HangMan
                 if (checkWin)
                 {
                     Console.WriteLine("YOU WON!!!");
-
+                    return true;
 
                     // add counter to put tally in scoreboard
-                    break;
+
                 }
                 if (!checkLoss)
                 {
                     misses++;
-                    
+
                 }
                 Console.WriteLine(guess);
             }
             if (misses == missCount)
             {
-                for(int i =0; i<50; i++)
+                for (int i = 0; i < 50; i++)
                 {
                     Console.WriteLine("          _ ._  _ , _ ._");
                     Console.WriteLine("        (_ ' ( `  )_  .__)");
@@ -232,15 +267,19 @@ namespace MidTernProj_HangMan
                     Console.WriteLine("         `~~`\\ ' . /`~~`");
                     Console.WriteLine("              ;    ;");
                     Console.WriteLine("              /   \\");
-                    Console.WriteLine("_____________/_ __\\_____________");
+                    Console.WriteLine("_____________/_ _ _\\_____________");
                     Thread.Sleep(50);
                     Console.Clear();
+
                 }
+                Console.WriteLine("You Lost.");
+                return false;
             }
             else
             {
-                    
+                return false;
             }
+
         }
     }
 }

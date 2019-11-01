@@ -28,6 +28,31 @@ namespace MidTernProj_HangMan
             Losses = losses;
         }
 
+        public static void CheckHighScore()
+        {
+            players.Sort((x, y) => x.WinNum.CompareTo(y.WinNum));
+            Console.WriteLine("Wins:\t Losses:  Win %:\t Name:");
+            foreach(Player player in players)
+            {
+                Console.WriteLine($"{player.WinNum}\t {player.Losses}\t {player.WinPercent}\t {player.UserName}");
+            }
+        }
+
+        public static void CalcWinLoss(Player player)
+        {
+            try
+            {
+            player.WinPercent = (double)(player.WinNum / player.Losses);
+
+            }
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("U N D E F E A T E D! ! !");
+               
+            }
+        }
+
+
         public static Player CheckPassword(string userName, string password)
         {
             foreach(Player player in players)
@@ -60,28 +85,42 @@ namespace MidTernProj_HangMan
         //}
         public static void AddPlayer(Player player)
         {
+            string path1 = "../../../UserInformation.txt";
+
+            string path = "C:\\Users\\Holmes HQ\\source\\repos\\MidTernProj_HangMan\\MidTernProj_HangMan\\UserInformation.txt";
+            List<string> users = new List<string>(File.ReadAllLines("../../../UserInformation.txt")); 
+
+            foreach(string user in users)
+            {
+                string[] word = user.Split('|');
+                players.Add(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));   
+                
+
+            }
+
+
             players.Add(player);
+
+            using(StreamWriter writer = File.AppendText(path))
+            {
+                writer.WriteLine($"{player.UserName}|{player.Password}|{player.WinPercent}|{player.WinNum}|{player.Losses}");
+                writer.Close();
+            }
+
         }
 
         public static void GrabPlayers()
         {
-            StreamReader reader = new StreamReader("../../../UserInformation.txt");
-            string line = reader.ReadLine();
-            string[] word = line.Split('|');
+            List<string> users = new List<string>(File.ReadAllLines("../../../UserInformation.txt"));
 
-            while (line != null)
+            foreach (string user in users)
             {
-                word = line.Split('|');
-                Player.AddPlayer(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));
-                line = reader.ReadLine();
+                string[] word = user.Split('|');
+                players.Add(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));
+
+
             }
-            reader.Close();
-            StreamWriter writer = new StreamWriter("../../../UserInformation.txt");
-            foreach (Player players in players)
-            {
-                writer.WriteLine($"{players.UserName}|{players.Password}|{players.WinPercent}|{players.WinNum}|");
-            }
-            writer.Close();
+
         }
     }
 }
