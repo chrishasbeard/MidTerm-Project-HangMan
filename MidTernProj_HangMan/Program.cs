@@ -6,9 +6,6 @@ namespace MidTernProj_HangMan
     {
         static void Main(string[] args)
         {
-
-           
-
             string mysteryWord = "bunny";
             char[] guess = new char[mysteryWord.Length];
             bool check = false;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -91,13 +91,18 @@ namespace MidTernProj_HangMan
             }
             if (length == 0)
             {
-                Console.WriteLine("\\  |  /" +
-                                  " \\ | /" +
-                                  "  \\|/");
+                Console.WriteLine("\\**|**/\n" +
+                                  "*\\*|*/*\n" +
+                                  "**\\|/**\n" +
+                                  "---*---\n" +
+                                  "**/|\\**\n" +
+                                  "*/*|*\\*\n" +
+                                  "/**|**\\\n" +
+                                  "");
+            } else
+            {
+                Console.WriteLine(dynamite);
             }
-
-            Console.WriteLine(dynamite);
-
         }
     }
 }
