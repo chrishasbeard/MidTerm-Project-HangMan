@@ -29,7 +29,7 @@ namespace MidTernProj_HangMan
 
         public static void CheckHighScore()
         {
-            players.Sort((x, y) => x.WinNum.CompareTo(y.WinNum));
+            players.Sort((x, y) => x.WinPercent.CompareTo(y.WinPercent));
             Console.WriteLine("Wins:\t Losses:  Win %:\t Name:");
             foreach(Player player in players)
             {
@@ -39,10 +39,10 @@ namespace MidTernProj_HangMan
 
         public static void CalcWinLoss(Player player)
         {
+
             try
             {
-            player.WinPercent = (double)(player.WinNum / player.Losses);
-
+                player.WinPercent = Math.Round(((double)player.WinNum / (double)player.Losses),2);
             }
             catch (DivideByZeroException)
             {
@@ -105,11 +105,15 @@ namespace MidTernProj_HangMan
         {
             List<string> users = new List<string>(File.ReadAllLines("../../../UserInformation.txt"));
 
-            foreach (string user in users)
+            if (players.Count == 0)
             {
-                string[] word = user.Split('|');
-                players.Add(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));
+                foreach (string user in users)
+                {
+                    string[] word = user.Split('|');
+                    players.Add(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));
+                }
             }
+
         }
 
         public static void WriteScore()

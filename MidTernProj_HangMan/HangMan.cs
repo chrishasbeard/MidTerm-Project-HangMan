@@ -4,16 +4,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Threading;
+using System.Security.Cryptography;
 
-// Jack - saving of wins and losses - simple password verification
+
 
 namespace MidTernProj_HangMan
 {
     class HangMan
     {
-        //public int Misses { get; set; }
-        // public string Guessed { get; set; }
-        // public Word word { get; set; }
+
 
         public HangMan()
         {
@@ -21,15 +20,17 @@ namespace MidTernProj_HangMan
         }
 
 
-        public static char GetUserInput()
+        public static char GetUserInput(string guessedLetters)
         {
+
             Console.WriteLine("Pick a letter!");
             string message = Console.ReadLine().ToLower();
-            if (Regex.IsMatch(message, @"^[a-z]{1}$"))
+            if (Regex.IsMatch(message, @"^[a-z]{1}$") && !(guessedLetters.Contains(message)))
             {
                 return message[0];
+
             }
-            return GetUserInput();
+            return GetUserInput(guessedLetters);
         }
 
         public static string GetDifficulty()
@@ -49,16 +50,22 @@ namespace MidTernProj_HangMan
             Player.GrabPlayers();
             Console.WriteLine("What is your user name?");
             string nameEntered = Console.ReadLine().ToLower();
+            string hashPass = GetHashString(nameEntered);
+           // bool checkhash = Player.CheckUserName(hashPass);
             bool checkExisting = Player.CheckUserName(nameEntered);
+
             if (!checkExisting)
             {
                 Console.WriteLine("This user name doesn't exist");
                 return VerifyLogIn();
             }
+        
             Console.WriteLine("What is your password?");
-            string passwordEntered = Console.ReadLine().ToLower();
+            string passwordEntered = PasswordMasking().ToLower();
             Player player = Player.CheckPassword(nameEntered, passwordEntered);
-            if (player.UserName == "Fake player")
+            Player playerHash = Player.CheckPassword(nameEntered, hashPass);
+            Console.WriteLine(hashPass);
+            if (player.UserName == "Fake player" || playerHash.UserName == "Fake player")
             {
                 Console.WriteLine("Wrong Password!");
                 return VerifyLogIn();
@@ -77,17 +84,58 @@ namespace MidTernProj_HangMan
             string passPattern = @"^(?!.*\|)(?=.*[0-9])(?=.*\W)(?=.*\w).{4,}$";
             while (badPassword)
             {
-                password = Console.ReadLine();
+                password = Console.ReadLine().ToLower();
                 if (Regex.IsMatch(password, passPattern))
                 {
                     badPassword = false;
                 }
                 Console.WriteLine("Invalid password your password must contain a number, a symbol (not \"|\"), and must be atleast 4 characters.");
             }
-
+            Console.WriteLine(password);
+            password.Trim();
+            password = GetHashString(password);
             Player newPlayer = new Player(userName, password, 0, 0, 0);
             Player.AddPlayer(newPlayer);
             return newPlayer;
+        }
+
+        public static byte[] GetHash(string input)
+        {
+            HashAlgorithm algorithm = SHA256.Create();
+            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+        }
+
+        public static string GetHashString(string input)
+        {
+            Console.WriteLine("this string" + input);
+            StringBuilder sb = new StringBuilder();
+            foreach (Byte b in GetHash(input))
+            {
+                sb.Append(b.ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
+        public static string PasswordMasking()
+        {
+            string pass = "";
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey(true);
+                if (key.Key != ConsoleKey.Backspace)
+                {
+                    pass += key.KeyChar;
+                    Console.Write("*");
+                }
+                else
+                {
+                    Console.Write("\b");
+                }
+            } while (key.Key != ConsoleKey.Enter);
+            pass = pass.Trim();
+            Console.WriteLine();
+            return pass;
         }
 
         public static Player LogInUser()
@@ -125,7 +173,7 @@ namespace MidTernProj_HangMan
             } while (KeepPlaying());
         }
 
-        
+
 
         public static bool KeepPlaying()
         {
@@ -184,15 +232,17 @@ namespace MidTernProj_HangMan
             dynamite += "\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾";
             Console.WriteLine(dynamite);
         }
+
+
         public static bool GuessingGame(Word word)
         {
-
             int missCount = 0;
             int misses = 0;
+            bool checkWin = false;
             bool checkLoss = false;
+            string guessedLetters = string.Empty;
             string mysteryWord = word.MysteriousName;
             char[] guess = new char[mysteryWord.Length];
-            bool checkWin = false;
             if (word.Difficulty == "easy")
             {
                 missCount = mysteryWord.Length + 3;
@@ -221,7 +271,13 @@ namespace MidTernProj_HangMan
                 Console.WriteLine();
                 checkWin = true;
                 checkLoss = false;
-                char playerGuess = GetUserInput();
+                if (guessedLetters != string.Empty)
+                {
+
+                    Console.WriteLine("You have guessed: " + guessedLetters);
+                }
+                char playerGuess = GetUserInput(guessedLetters);
+                guessedLetters += playerGuess;
                 for (int j = 0; j < mysteryWord.Length; j++)
                 {
                     if (playerGuess == mysteryWord[j])
@@ -261,7 +317,7 @@ namespace MidTernProj_HangMan
                     Console.WriteLine("      ( (  (    )   `)  ) _)");
                     Console.WriteLine("     (__ (_   (_ . _) _) ,__)");
                     Console.WriteLine("         `~~`\\ ' . /`~~`");
-                    Console.WriteLine("              ;    ;");
+                    Console.WriteLine("              ;   ;");
                     Console.WriteLine("              /   \\");
                     Console.WriteLine("_____________/_ _ _\\_____________");
                     Thread.Sleep(50);

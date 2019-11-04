@@ -1,6 +1,9 @@
-chrish|bean|0|0|0
 doggo|sup|0|0|0
-jackl|banana|0|0|0
-crazy|bread|0|0|0
+jackl|banana|0|0|3
 howard|duck|0|0|0
 darry|degen|0|0|0
+GG|boobs|0|0|0
+chris|AAAF45B398279EA5E661AC1DA925C425842B3ADA946A60B482C65FE147058129|0|0|1
+chrischris|1453E566A565F4574CC16E0F9A718A8584930CD1E9A22C95A88969B156A4F9DC|0|0|1
+chrish|bean|0.67|4|6
+crazy|bread|∞|1|0
