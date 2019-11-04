@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace MidTernProj_HangMan
@@ -27,31 +28,34 @@ namespace MidTernProj_HangMan
             Losses = losses;
         }
 
-        public static void CheckHighScore()
+        //grabs players from text file to see if there was a valid log in.
+        public static void GrabPlayers()
         {
-            players.Sort((x, y) => x.WinPercent.CompareTo(y.WinPercent));
-            Console.WriteLine("Wins:\t Losses:  Win %:\t Name:");
-            foreach(Player player in players)
-            {
-                Console.WriteLine($"{player.WinNum}\t {player.Losses}\t {player.WinPercent}\t {player.UserName}");
-            }
-        }
+            List<string> users = new List<string>(File.ReadAllLines("../../../UserInformation.txt"));
 
-        public static void CalcWinLoss(Player player)
+            if (players.Count == 0)
+            {
+                foreach (string user in users)
+                {
+                    string[] word = user.Split('|');
+                    players.Add(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));
+                }
+            }
+
+        }
+       //finds a players user name from the list
+        public static bool CheckUserName(string userName)
         {
-
-            try
+            foreach (Player player in players)
             {
-                player.WinPercent = Math.Round(((double)player.WinNum / (double)player.Losses),2);
+                if(player.UserName == userName)
+                {
+                    return true;
+                }
             }
-            catch (DivideByZeroException)
-            {
-                Console.WriteLine("U N D E F E A T E D! ! !");
-               
-            }
+            return false;
         }
-
-
+       //finds a players password from the list
         public static Player CheckPassword(string userName, string password)
         {
             foreach(Player player in players)
@@ -66,18 +70,7 @@ namespace MidTernProj_HangMan
             return new Player("Fake player", "", 0, 0,0);
         }
 
-        public static bool CheckUserName(string userName)
-        {
-            foreach (Player player in players)
-            {
-                if(player.UserName == userName)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
+        // adds new player to the list
         public static void AddPlayer(Player player)
         {
             string path = "C:\\Users\\Holmes HQ\\source\\repos\\MidTernProj_HangMan\\MidTernProj_HangMan\\UserInformation.txt";
@@ -100,22 +93,31 @@ namespace MidTernProj_HangMan
             }
 
         }
-
-        public static void GrabPlayers()
+        //calculates the win loss percentage of user
+        public static void CalcWinLoss(Player player)
         {
-            List<string> users = new List<string>(File.ReadAllLines("../../../UserInformation.txt"));
 
-            if (players.Count == 0)
+            try
             {
-                foreach (string user in users)
-                {
-                    string[] word = user.Split('|');
-                    players.Add(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));
-                }
+                player.WinPercent = Math.Round(((double)player.WinNum / (double)player.Losses),2);
             }
-
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("U N D E F E A T E D! ! !");
+               
+            }
         }
-
+        //shows the score for all players on the list
+        public static void CheckHighScore()
+        {
+            players.Sort((x, y) => x.WinPercent.CompareTo(y.WinPercent));
+            Console.WriteLine("Wins:\t Losses:  Win %:\t Name:");
+            foreach(Player player in players)
+            {
+                Console.WriteLine($"{player.WinNum}\t {player.Losses}\t {player.WinPercent}\t {player.UserName}");
+            }
+        }
+        //updates the text file
         public static void WriteScore()
         {
             if (players.Count > 0)
