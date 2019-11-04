@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Threading;
 
+// Jack - saving of wins and losses - simple password verification
+
 namespace MidTernProj_HangMan
 {
     class HangMan
@@ -69,8 +71,19 @@ namespace MidTernProj_HangMan
         {
             Console.WriteLine("What will be your user name?");
             string userName = Console.ReadLine();
-            Console.WriteLine("what will be your password?");
-            string password = Console.ReadLine();
+            Console.WriteLine("Your password must contain a number, a symbol (not \"|\"), and must be atleast 4 characters.");
+            bool badPassword = true;
+            string password = "";
+            string passPattern = @"^(?!.*\|)(?=.*[0-9])(?=.*\W)(?=.*\w).{4,}$";
+            while (badPassword)
+            {
+                password = Console.ReadLine();
+                if (Regex.IsMatch(password, passPattern))
+                {
+                    badPassword = false;
+                }
+                Console.WriteLine("Invalid password your password must contain a number, a symbol (not \"|\"), and must be atleast 4 characters.");
+            }
 
             Player newPlayer = new Player(userName, password, 0, 0, 0);
             Player.AddPlayer(newPlayer);
@@ -108,6 +121,7 @@ namespace MidTernProj_HangMan
                 }
                 Player.CheckHighScore();
                 Player.CalcWinLoss(player);
+                Player.WriteScore();
             } while (KeepPlaying());
         }
 
@@ -134,7 +148,7 @@ namespace MidTernProj_HangMan
         public static Word PickWord(string difficulty)
         {
             List<Word> words = new List<Word>();
-            StreamReader reader = new StreamReader("../../../TextFile1.txt");
+            StreamReader reader = new StreamReader("../../../WordList.txt");
             string line = reader.ReadLine();
             Random random = new Random();
             while (line != null)
@@ -168,25 +182,7 @@ namespace MidTernProj_HangMan
                 }
             }
             dynamite += "\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾";
-            //while (dynamite.Contains("*"))
-            //{
-
-            //}
-            if (length == 0)
-            {
-                Console.WriteLine("\\**|**/\n" +
-                                  "*\\*|*/*\n" +
-                                  "**\\|/**\n" +
-                                  "---*---\n" +
-                                  "**/|\\**\n" +
-                                  "*/*|*\\*\n" +
-                                  "/**|**\\\n" +
-                                  "");
-            }
-            else
-            {
-                Console.WriteLine(dynamite);
-            }
+            Console.WriteLine(dynamite);
         }
         public static bool GuessingGame(Word word)
         {

@@ -13,12 +13,11 @@ namespace MidTernProj_HangMan
         public int WinNum { get; set; }
         public int Losses { get; set; }
 
-
-
         private static List<Player> players = new List<Player>()
         {
 
         };
+
         public Player(string userName, string password, double winPercent, int winNum, int losses)
         {
             UserName = userName;
@@ -79,14 +78,8 @@ namespace MidTernProj_HangMan
             return false;
         }
 
-        //public static List<Player> GetPlayers()
-        //{
-        //    return players;
-        //}
         public static void AddPlayer(Player player)
         {
-            string path1 = "../../../UserInformation.txt";
-
             string path = "C:\\Users\\Holmes HQ\\source\\repos\\MidTernProj_HangMan\\MidTernProj_HangMan\\UserInformation.txt";
             List<string> users = new List<string>(File.ReadAllLines("../../../UserInformation.txt")); 
 
@@ -97,7 +90,6 @@ namespace MidTernProj_HangMan
                 
 
             }
-
 
             players.Add(player);
 
@@ -117,10 +109,21 @@ namespace MidTernProj_HangMan
             {
                 string[] word = user.Split('|');
                 players.Add(new Player(word[0], word[1], double.Parse(word[2]), int.Parse(word[3]), int.Parse(word[4])));
-
-
             }
+        }
 
+        public static void WriteScore()
+        {
+            if (players.Count > 0)
+            {
+                StreamWriter writer = new StreamWriter("../../../UserInformation.txt");
+
+                foreach (Player player in players)
+                {
+                    writer.WriteLine($"{player.UserName}|{player.Password}|{player.WinPercent}|{player.WinNum}|{player.Losses}");
+                }
+                writer.Close();
+            }
         }
     }
 }
