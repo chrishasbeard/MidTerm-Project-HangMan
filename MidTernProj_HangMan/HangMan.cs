@@ -50,7 +50,7 @@ namespace MidTernProj_HangMan
             {
                 return VerifyLogIn();
             }
-            else if(answer == "admin")
+            else if (answer == "admin")
             {
                 return VerifyAdmin();
             }
@@ -72,14 +72,14 @@ namespace MidTernProj_HangMan
                 Console.WriteLine("This user name doesn't exist");
                 return VerifyLogIn();
             }
-        
+
             Console.WriteLine("What is your password?");
             string passwordEntered = PasswordMasking().ToLower();
             string hashPass = GetHashString(passwordEntered);
             Player player = Player.CheckPassword(nameEntered, passwordEntered);
             Player playerHash = Player.CheckPassword(nameEntered, hashPass);
             //Console.WriteLine(hashPass);
-            if ( playerHash.UserName == "Fake player")
+            if (playerHash.UserName == "Fake player")
             {
                 Console.WriteLine("Wrong Password!");
                 return VerifyLogIn();
@@ -87,13 +87,29 @@ namespace MidTernProj_HangMan
 
             return playerHash;
         }
-       //adds a new user to the game, that can be stored for a later date
+        //adds a new user to the game, that can be stored for a later date
         public static Player AddNewUser()
         {
             Console.WriteLine("What will be your user name?");
-            string userName = Console.ReadLine();
+            string userName = "";
+            string userPattern = @"^(?!.*\|)(?=.*\w).*$";
+            bool badUserName = true;
+            while (badUserName)
+            {
+                userName = Console.ReadLine();
+                if (Regex.IsMatch(userName, userPattern))
+                {
+                    badUserName = false;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid user name, no \"|\"");
+
+                }
+            }
             Console.WriteLine("Your password must contain a number, a symbol (not \"|\"), and must be atleast 4 characters.");
             bool badPassword = true;
+
             string password = "";
             string passPattern = @"^(?!.*\|)(?=.*[0-9])(?=.*\W)(?=.*\w).{4,}$";
             while (badPassword)
@@ -103,7 +119,11 @@ namespace MidTernProj_HangMan
                 {
                     badPassword = false;
                 }
-                Console.WriteLine("Invalid password your password must contain a number, a symbol (not \"|\"), and must be atleast 4 characters.");
+                else
+                {
+                    Console.WriteLine("Invalid password your password must contain a number, a symbol (not \"|\"), and must be atleast 4 characters.");
+
+                }
             }
             //Console.WriteLine(password);
             password.Trim();
@@ -112,7 +132,7 @@ namespace MidTernProj_HangMan
             Player.AddPlayer(newPlayer);
             return newPlayer;
         }
-       //checks to see if an admin account is being used.
+        //checks to see if an admin account is being used.
         public static Player VerifyAdmin()
         {
             Player.GrabPlayers();
@@ -128,10 +148,10 @@ namespace MidTernProj_HangMan
 
             Console.WriteLine("What is your password?");
             string passwordEntered = PasswordMasking().ToLower();
-           
+
             Player player = Player.CheckPassword(nameEntered, passwordEntered);
-         
-         
+
+
             if (player.UserName == "Fake player")
             {
                 Console.WriteLine("Wrong Password!");
@@ -140,7 +160,7 @@ namespace MidTernProj_HangMan
 
             return player;
         }
-       //this method in conjunction with the GetHash method hides the passwords stored from the user.
+        //this method in conjunction with the GetHash method hides the passwords stored from the user.
         public static string GetHashString(string input)
         {
             //Console.WriteLine("this string" + input);
@@ -151,7 +171,7 @@ namespace MidTernProj_HangMan
             }
             return sb.ToString();
         }
-        
+
         public static byte[] GetHash(string input)
         {
             HashAlgorithm algorithm = SHA256.Create();
@@ -179,7 +199,7 @@ namespace MidTernProj_HangMan
             Console.WriteLine();
             return pass;
         }
-       //sets the difficulty of the game for the user
+        //sets the difficulty of the game for the user
         public static string GetDifficulty()
         {
             Console.WriteLine("Welcome to Dynamite-man! the game that will blow your socks off, literally.\n\nLet's play!");
@@ -191,7 +211,7 @@ namespace MidTernProj_HangMan
             }
             return GetDifficulty();
         }
-       //this method will take in the user input and compare to the characters of the word stored in game to see if they match.
+        //this method will take in the user input and compare to the characters of the word stored in game to see if they match.
         public static bool GuessingGame(Word word)
         {
             int missCount = 0;
@@ -311,7 +331,7 @@ namespace MidTernProj_HangMan
             Word word = words[random.Next(words.Count)];
             return word;
         }
-       
+
         //grabs user's letters and validates that a single letter was inputed
         public static char GetUserInput(string guessedLetters)
         {
